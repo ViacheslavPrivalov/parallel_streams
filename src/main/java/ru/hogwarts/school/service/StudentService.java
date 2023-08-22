@@ -7,6 +7,9 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repositoy.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StudentService {
@@ -76,5 +79,52 @@ public class StudentService {
 
         logger.info("Was invoked method for find last 5 students");
         return studentRepository.last5Students();
+    }
+
+    public List<String> getStudentsNamesByLetter(String letter) {
+        List<Student> students = studentRepository.findAll();
+//        List<String> names = new ArrayList<>();
+//        for (Student student : students) {
+//            if (student.getName().startsWith(letter)) {
+//                names.add(student.getName().toUpperCase());
+//            }
+//        }
+//        return names;
+        List<String> names = students.stream()
+                .map(Student::getName)
+                .filter(name -> name.startsWith(letter))
+                .map(String::toUpperCase)
+                .sorted()
+                .collect(Collectors.toList());
+        return names;
+    }
+
+    public Long getAverageAgeByStream() {
+        List<Student> students = studentRepository.findAll();
+//        int sum = 0;
+//        for (Student student : students) {
+//            sum += student.getAge();
+//        }
+//
+//        return sum / students.size();
+
+        long sum = students.stream()
+                .mapToLong(Student::getAge)
+                .sum();
+        return sum / students.size();
+    }
+
+    public long getSomeNumber() {
+        long time = System.currentTimeMillis();
+
+        int sum = Stream
+                .iterate(1, a -> a + 1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, (a, b) -> a + b);
+
+
+        time = System.currentTimeMillis() - time;
+        return time;
     }
 }
