@@ -108,10 +108,10 @@ public class StudentService {
 //
 //        return sum / students.size();
 
-        long sum = students.stream()
+        return (long) students.stream()
                 .mapToLong(Student::getAge)
-                .sum();
-        return sum / students.size();
+                .average().getAsDouble();
+
     }
 
     public long getSomeNumber() {
